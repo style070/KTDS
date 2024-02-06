@@ -5,6 +5,7 @@ import java.time.Period;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Scanner;
 
 public class ContactFuction {
 
@@ -31,6 +32,15 @@ public class ContactFuction {
 		} else if (con.getName() == null || con.getName().isEmpty()) {
 			System.out.println("이름은 필수 입력사항 입니다.");
 		} else {
+			int arraySize = this.contact.size();
+			for (int i = 0; i < arraySize; i++) {
+				boolean hasDuplicate = this.contact.get(i).getPhoneNumber().stream()
+						.anyMatch(con.getPhoneNumber()::contains);
+				if (hasDuplicate) {
+					System.out.println("중복된 전화번호가 이미 등록되어 있습니다.");
+					return;
+				}
+			}
 			this.contact.add(con);
 		}
 
@@ -55,9 +65,9 @@ public class ContactFuction {
 	 */
 	public Contact contactDetail(String phoneNum) {
 		int arraySize = this.contact.size();
-		for(int i=0;i<arraySize;i++) {
-			int phoneSize = this.contact.get(0).phoneNumber.size();
-			for(int j=0;j<phoneSize;j++) {
+		for (int i = 0; i < arraySize; i++) {
+			int phoneSize = this.contact.get(i).phoneNumber.size();
+			for (int j = 0; j < phoneSize; j++) {
 				String contactPhoneNum = this.contact.get(i).getPhoneNumber().get(j);
 				if (contactPhoneNum.equals(phoneNum)) {
 					return this.contact.get(i);
@@ -81,10 +91,42 @@ public class ContactFuction {
 	/**
 	 * 연락처 편집
 	 * 
-	 * @param con
+	 * @param phoneNum
 	 */
-	public void contactEdit(Contact con) {
-
+	public void contactEdit(String phoneNum) {
+		Scanner sc = new Scanner(System.in);
+		int arraySize = this.contact.size();
+		int index = 0;
+		for(int i=0; i<arraySize;i++) {
+			if((this.contact.get(i).getPhoneNumber().contains(phoneNum))){
+				System.out.println(this.contact.get(i).toString());
+				index = i;
+				break;
+			}
+			else {
+				System.out.println("존재하지 않는 연락처 입니다.");
+				return;
+			}
+		}
+		
+		System.out.println("수정할 인덱스 번호를 입력하세요 휴대폰번호(0)~메모(7)");
+		int selectIndex = sc.nextInt();
+		if(selectIndex == 0) {
+			System.out.println(this.contact.get(index).getPhoneNumber().toString());
+			System.out.println("변경할 휴대폰 번호를 선택하세요 Index(0부터)");
+			int selectPhone = sc.nextInt();
+			System.out.println("변경할 번호를 입력하세요");
+			String modifyNum = sc.nextLine();
+			this.contact.get(index).getPhoneNumber().set(selectPhone, modifyNum);
+			System.out.println("변경이 완료되었습니다.");
+			System.out.println(this.contact.get(index).getPhoneNumber().toString());
+			
+			
+		}
+		//this.contact.get(index).get(selectIndex)
+		
+		
+		
 	}
 
 	/**
@@ -123,23 +165,25 @@ public class ContactFuction {
 	 */
 	public List<Contact> contactNearAnniversary() {
 		LocalDate nowDate = LocalDate.now();
-		//int[] nowDateArr = {nowDate.getYear(),nowDate.getMonthValue(),nowDate.getDayOfMonth()};
-		
-			
-		
+		// int[] nowDateArr =
+		// {nowDate.getYear(),nowDate.getMonthValue(),nowDate.getDayOfMonth()};
+
 		int arraySize = this.contact.size();
 		List<Contact> birthDayCon = new ArrayList<>();
-		for(int i=0;i<arraySize;i++) {
+		for (int i = 0; i < arraySize; i++) {
 			String birthDay = this.contact.get(i).getBirthDay();
-			String birthDayReplace = birthDay.replace('/', '-');
-			LocalDate birthDayLD = LocalDate.parse(birthDayReplace);
-			Period between = Period.between(birthDayLD, nowDate);
-			
-			//String[] birthDayArr=this.contact.get(i).getBirthDay().split("/");
-			if((between.getDays()>0 && between.getDays()<15) && (between.getMonths() == 0)){
+			String birthDayReplace = birthDay.replace('/', '-'); // 1996-02-10
+			String birthDayYearReplace = birthDayReplace.substring(4);
+			String birthReult = "2024" + birthDayYearReplace;
+			LocalDate birthDayLD = LocalDate.parse(birthReult);
+			Period between = Period.between(nowDate, birthDayLD);
+			int birthGap = between.getDays();
+
+			// String[] birthDayArr=this.contact.get(i).getBirthDay().split("/");
+			if ((birthGap > 0 && birthGap < 15) && (between.getMonths() == 0)) {
 				birthDayCon.add(this.contact.get(i));
 			}
-		
+
 		}
 		return birthDayCon;
 
@@ -154,7 +198,7 @@ public class ContactFuction {
 		List<Contact> blockList = new ArrayList<>();
 		int arraySize = this.contact.size();
 		for (int i = 0; i < arraySize; i++) {
-			if(this.contact.get(i).getIsBlock() == true) {
+			if (this.contact.get(i).getIsBlock() == true) {
 				blockList.add(this.contact.get(i));
 			}
 		}
@@ -164,38 +208,37 @@ public class ContactFuction {
 
 	public void contactSetBlock(String phoneNum) {
 		int arraySize = this.contact.size();
-		for(int i=0;i<arraySize;i++) {
+		for (int i = 0; i < arraySize; i++) {
 			int phoneSize = this.contact.get(i).phoneNumber.size();
 			for (int j = 0; j < phoneSize; j++) {
 				String contactPhoneNum = this.contact.get(i).getPhoneNumber().get(j);
 				if (contactPhoneNum.equals(phoneNum)) {
-					if(this.contact.get(i).getIsBlock() == true) {
-						this.contact.get(i).setIsBlock(false); 
-					}
-					else {
+					if (this.contact.get(i).getIsBlock() == true) {
+						this.contact.get(i).setIsBlock(false);
+					} else {
 						this.contact.get(i).setIsBlock(true);
 					}
 					return;
 				}
 			}
-			
+
 		}
 	}
 
 	public String contactAnniverarty(String phoneNum) {
 		int arraySize = this.contact.size();
-		for(int i=0;i<arraySize;i++) {
-			int phoneSize=this.contact.get(i).phoneNumber.size();
-			for(int j=0;j<phoneSize;j++) {
+		for (int i = 0; i < arraySize; i++) {
+			int phoneSize = this.contact.get(0).phoneNumber.size();
+			for (int j = 0; j < phoneSize; j++) {
 				String contactPhoneNum = this.contact.get(i).getPhoneNumber().get(j);
-				if(contactPhoneNum.equals(phoneNum)) {
+				if (contactPhoneNum.equals(phoneNum)) {
 					String anniversary = this.contact.get(i).getAnniversary();
 					return anniversary;
 				}
-				
+
 			}
 		}
-		
+
 		return null;
 	}
 
