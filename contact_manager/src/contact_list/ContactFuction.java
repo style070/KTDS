@@ -94,6 +94,7 @@ public class ContactFuction {
 	 * @param phoneNum
 	 */
 	public void contactEdit(String phoneNum) {
+
 		Scanner sc = new Scanner(System.in);
 		int arraySize = this.contact.size();
 		int index = 0;
@@ -115,9 +116,10 @@ public class ContactFuction {
 			System.out.println(this.contact.get(index).getPhoneNumber().toString());
 			System.out.println("변경할 휴대폰 번호를 선택하세요 Index(0부터)");
 			int selectPhone = sc.nextInt();
+			sc.nextLine();
 			System.out.println("변경할 번호를 입력하세요");
 			String modifyNum = sc.nextLine();
-			this.contact.get(index).getPhoneNumber().set(selectPhone, modifyNum);
+			this.contact.get(index).getPhoneNumber().set( selectPhone, modifyNum);
 			System.out.println("변경이 완료되었습니다.");
 			System.out.println(this.contact.get(index).getPhoneNumber().toString());
 			
