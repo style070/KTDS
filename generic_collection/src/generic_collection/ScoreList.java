@@ -1,5 +1,12 @@
 package generic_collection;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 public class ScoreList<T> {
 
 	/**
@@ -89,13 +96,26 @@ public class ScoreList<T> {
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
 		sb.append("ScoreList[");
+		
 		//인덱스는 필요없지만 마지막에 존재하는 null값은 출력하지 않기 위해서 for-each가 아닌 for(index)문을 사용함
-		for (int i = 0; i < size; i++) {
-			sb.append(scoreArray[i] + ",");
-		}
-		sb.append("]");
+		// Stream으로 변경 시작
+		
+		String items = Arrays.stream(this.scoreArray)
+								.filter(object -> object != null)
+								.map(object -> object +"")
+								.collect(Collectors.joining(","));
+		
+//		for (int i = 0; i < size; i++) {
+//			sb.append(scoreArray[i] + ",");
+//		}
+		
+		
+		sb.append(items+"]");
 
 		return sb.toString();
+		
+		 
 	}
+	
 
 }
